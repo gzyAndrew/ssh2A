@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--注册jdbc属性文件 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+
+    <!-- c3po数据源 从propertites文件中读取 -->
+    <bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driverClassName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="autoCommitOnClose" value="true"/>
+        <property name="initialPoolSize" value="${cpool.initialPoolSize}"/>
+        <property name="minPoolSize" value="${cpool.minPoolSize}"/>
+        <property name="maxPoolSize" value="${cpool.maxPoolSize}"/>
+        <property name="maxIdleTime" value="${cpool.maxIdleTime}"/>
+        <property name="acquireIncrement" value="${cpool.acquireIncrement}"/>
+        <property name="idleConnectionTestPeriod" value="${cpool.idleConnectionTestPeriod}"/>
+        <property name="acquireRetryAttempts" value="${cpool.acquireRetryAttempts}"/>
+        <property name="maxStatements" value="${c3p0.maxStatements}"/>
+        <property name="maxStatementsPerConnection" value="${c3p0.maxStatementsPerConnection}"/>
+    </bean>
+
+
+    <!-- 注册SessionFactory -->
+    <bean id="mySessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--<property name="packagesToScan" value="com.rj.bd.framework.entity" />-->
+        <!-- 4.2加载HIbernate的映射文件 -->
+        <property name="mappingResources">
+            <list>
+                <value>YxglXuanchuangfangshi.hbm.xml</value>
+                <value>YxglXuanchuangjilu.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.format_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+                <prop key="hibernate.current_session_context_class">
+                    org.springframework.orm.hibernate5.SpringSessionContext
+                </prop>
+            </props>
+        </property>
+        <!-- <property name="mappingDirectoryLocations" value="com/bjpowernode/beans"/> -->
+    </bean>
+
+    <!-- 注册事务管理器 -->
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="mySessionFactory"/>
+    </bean>
+    <!-- 组件扫描器 action、service、dao 里面对象的注入到依赖扫描器 -->
+
+    <context:component-scan base-package="com.rj.bd.*"/>
+
+    <!-- 事务注解驱动 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- =======设值持久层连库Bean=============================================== -->
+    <bean id="dao" class="com.rj.bd.framework.dao.DaoImpl">
+        <property name="sessionFactory" ref="mySessionFactory"/>
+    </bean>
+</beans>
