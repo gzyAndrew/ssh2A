@@ -10,7 +10,9 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ParentPackage(value = "struts-default")
 @Namespace(value = "/xcjl")
@@ -45,7 +47,14 @@ public class XcjlAction extends BasicAction{
 
 	@Action(value = "editpage")
 	public void editpage() throws Exception {
-		 super.editpage(service);
+		entity=super.editpage(service);
+		List list = ((XcjlServiceImpl) service).queryXcfs();
+		Map map=new HashMap();
+		map.put("data", entity);
+		map.put("list", list);
+		map.put("msg", "查询成功");
+		map.put("code", 200);
+		output(map);
 	}
 
 	@Action(value = "edit")

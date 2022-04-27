@@ -63,6 +63,7 @@ public class BasicAction {
 	public Object editpage(BasicSercvice service) throws Exception{
 		System.out.println("修改---->"+id);
 		return service.queryById(id);
+
 	}
 	/**
 	 * 修改数据

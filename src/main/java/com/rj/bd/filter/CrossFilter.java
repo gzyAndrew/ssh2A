@@ -34,6 +34,8 @@ public class CrossFilter implements Filter {
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
         /* 是否携带cookie */
         response.setHeader("Access-Control-Allow-Credentials", "true");
+        request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
         filterChain.doFilter(request, response);
     }
 

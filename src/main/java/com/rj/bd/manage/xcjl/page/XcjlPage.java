@@ -51,7 +51,7 @@ public class XcjlPage extends BasicPage {
             hql = hql + " and xcjlDate > ?  ";
                 this.addParams(Types.VARCHAR,Datamin);
         }
-
+        System.out.println(Datamax);
         if (Datamax != null && Datamax.trim().length() > 0) {
             hql = hql + " and xcjlDate < ? ";
             this.addParams(Types.VARCHAR, Datamax);
